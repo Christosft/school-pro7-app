@@ -29,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -95,7 +96,7 @@ public class InsertTeacherPage extends JFrame {
 		contentPane.add(header);
 
 		JLabel govImage = new JLabel("");
-		govImage.setIcon(new ImageIcon(InsertTeacherPage.class.getResource("/images/gov_logo_small.png")));
+		govImage.setIcon(new ImageIcon(Objects.requireNonNull(InsertTeacherPage.class.getResource("/images/gov_logo_small.png"))));
 		govImage.setBounds(0, 0, 100, 52);
 		header.add(govImage);
 

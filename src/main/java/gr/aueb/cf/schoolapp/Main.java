@@ -1,22 +1,17 @@
 package gr.aueb.cf.schoolapp;
 
 import gr.aueb.cf.schoolapp.view_controller.*;
-
 import java.awt.EventQueue;
 
 public class Main {
 	private static final LandingPage landingPage = new LandingPage();
 	private static final LoginPage loginPage = new LoginPage();
-	private static final Dashboard dashboard = new Dashboard();
+	private static final Dashboard dashboard =  new Dashboard();
 	private static final ViewTeachersPage viewTeachersPage = new ViewTeachersPage();
 	private static final TeacherView teacherView = new TeacherView();
 	private static final UpdateTeacherPage updateTeacherPage = new UpdateTeacherPage();
 	private static final InsertTeacherPage insertTeacherPage = new InsertTeacherPage();
-	
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
 			try {
@@ -48,7 +43,6 @@ public class Main {
 		});
 	}
 
-
 	public static LandingPage getLandingPage() {
 		return landingPage;
 	}
@@ -76,6 +70,6 @@ public class Main {
 	public static InsertTeacherPage getInsertTeacherPage() {
 		return insertTeacherPage;
 	}
-	
-	
+
+
 }
