@@ -2,24 +2,15 @@ package gr.aueb.cf.schoolapp.view_controller;
 
 import gr.aueb.cf.schoolapp.Main;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.ImageIcon;
-import javax.swing.JSeparator;
-import java.awt.Font;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.Objects;
 
 public class Dashboard extends JFrame {
 
@@ -28,26 +19,6 @@ public class Dashboard extends JFrame {
     private static Connection connection;
 
     public Dashboard() {
-//		addWindowListener(new WindowAdapter() {
-//			@Override
-//			public void windowOpened(WindowEvent e) {
-//				String sql = "jdbc:mysql://localhost:3306/school7dbpro?serverTimezone=UTC";
-//				String username = "user7pro";
-//				String password = "12345";
-//
-//				try {
-//					// Class.forName("com.mysql.cj.jdbc.Driver");
-//					connection = DriverManager.getConnection(sql, username, password);
-//					System.out.println("Connection success");
-//				} catch (SQLException e1) {
-//					e1.printStackTrace();
-//				}
-////				catch (ClassNotFoundException e1) {
-////					// TODO Auto-generated catch block
-////					e1.printStackTrace();
-////				}
-//			}
-//		});
 
         setTitle("Ποιότητα στην Εκπαίδευση");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,7 +36,7 @@ public class Dashboard extends JFrame {
         contentPane.add(header);
 
         JLabel govImage = new JLabel("");
-        govImage.setIcon(new ImageIcon(Dashboard.class.getResource("/images/gov_logo_small.png")));
+        govImage.setIcon(new ImageIcon(Objects.requireNonNull(Dashboard.class.getResource("/images/gov_logo_small.png"))));
         govImage.setBounds(0, 0, 100, 52);
         header.add(govImage);
 
@@ -124,13 +95,10 @@ public class Dashboard extends JFrame {
             }
             @Override
             public void mouseClicked(MouseEvent e) {
-
-                Main.getDashboard().setEnabled(false);
+                Main.getDashboard().setEnabled(true);
                 Main.getViewTeachersPage().setVisible(true);
-
             }
         });
-
         lbl_teachersView.setForeground(Color.WHITE);
         lbl_teachersView.setFont(new Font("Tahoma", Font.PLAIN, 12));
         lbl_teachersView.setBounds(15, 61, 153, 26);
@@ -148,11 +116,10 @@ public class Dashboard extends JFrame {
             }
             @Override
             public void mouseClicked(MouseEvent e) {
-                Main.getDashboard().setEnabled(false);
+                Main.getDashboard().setEnabled(true);
                 Main.getInsertTeacherPage().setVisible(true);
             }
         });
-
         lbl_teacherInsert.setForeground(Color.WHITE);
         lbl_teacherInsert.setFont(new Font("Tahoma", Font.PLAIN, 12));
         lbl_teacherInsert.setBounds(15, 87, 153, 26);
@@ -186,11 +153,10 @@ public class Dashboard extends JFrame {
         JButton btnViewTeachers = new JButton("Συνέχεια");
         btnViewTeachers.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Main.getDashboard().setEnabled(false);
+                Main.getDashboard().setEnabled(true);
                 Main.getViewTeachersPage().setVisible(true);
             }
         });
-
         btnViewTeachers.setFont(new Font("Tahoma", Font.PLAIN, 12));
         btnViewTeachers.setForeground(new Color(255, 255, 255));
         btnViewTeachers.setBackground(new Color(0, 128, 64));
@@ -214,15 +180,10 @@ public class Dashboard extends JFrame {
                 Main.getInsertTeacherPage().setVisible(true);
             }
         });
-
         btnInsertTeacher.setForeground(Color.WHITE);
         btnInsertTeacher.setFont(new Font("Tahoma", Font.PLAIN, 12));
         btnInsertTeacher.setBackground(new Color(0, 128, 64));
         btnInsertTeacher.setBounds(202, 279, 94, 31);
         contentPane.add(btnInsertTeacher);
     }
-
-//	public static Connection getConnection() {
-//		return connection;
-//	}
 }

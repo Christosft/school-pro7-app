@@ -17,15 +17,12 @@ public class Teacher {
     private String uuid;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    // private Boolean enabled; // soft delete
 
-    public Teacher() {
+    public Teacher() { }
 
-    }
-
-    public Teacher(Integer id, String firstname, String lastname, String vat, String fatherName,
-                   String phoneNum, String email, String street, String streetNum, String zipCode,
-                   Integer cityId, String uuid, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Teacher(Integer id, String firstname, String lastname, String vat, String fatherName, String phoneNum, String email,
+                   String street, String streetNum, String zipCode, Integer cityId, String uuid, LocalDateTime createdAt,
+                   LocalDateTime updatedAt) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -130,14 +127,6 @@ public class Teacher {
         this.cityId = cityId;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -152,5 +141,33 @@ public class Teacher {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", vat='" + vat + '\'' +
+                ", fatherName='" + fatherName + '\'' +
+                ", phoneNum='" + phoneNum + '\'' +
+                ", email='" + email + '\'' +
+                ", street='" + street + '\'' +
+                ", streetNum='" + streetNum + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", cityId=" + cityId +
+                ", uuid='" + uuid + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

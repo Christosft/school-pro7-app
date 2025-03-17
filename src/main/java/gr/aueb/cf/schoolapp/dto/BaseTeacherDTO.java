@@ -1,7 +1,6 @@
 package gr.aueb.cf.schoolapp.dto;
 
-public abstract class BaseDTO {
-
+public abstract class BaseTeacherDTO {
     private String firstname;
     private String lastname;
     private String vat;
@@ -13,13 +12,11 @@ public abstract class BaseDTO {
     private String zipCode;
     private Integer cityId;
 
-    public BaseDTO() {
+    public BaseTeacherDTO() {}
 
-    }
-
-    public BaseDTO(String firstname, String lastname, String vat, String fatherName,
-                   String phoneNum, String email, String street, String streetNum,
-                   String zipCode, Integer cityId) {
+    public BaseTeacherDTO(String firstname, String lastname, String vat, String fatherName,
+                          String phoneNum, String email, String street, String streetNum,
+                          String zipCode, Integer cityId) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.vat = vat;
@@ -110,5 +107,21 @@ public abstract class BaseDTO {
 
     public void setCityId(Integer cityId) {
         this.cityId = cityId;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseTeacherDTO{" +
+                "firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", vat='" + vat + '\'' +
+                ", fatherName='" + fatherName + '\'' +
+                ", phoneNum='" + phoneNum + '\'' +
+                ", email='" + email + '\'' +
+                ", street='" + street + '\'' +
+                ", streetNum='" + streetNum + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", cityId=" + cityId +
+                '}';
     }
 }

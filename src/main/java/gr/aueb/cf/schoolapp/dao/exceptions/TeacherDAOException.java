@@ -7,7 +7,7 @@ public class TeacherDAOException extends Exception {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public TeacherDAOException(String message) {
-        super(message);
+    public TeacherDAOException(String s) {
+        super(s);
     }
 }

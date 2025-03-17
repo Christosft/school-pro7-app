@@ -1,9 +1,5 @@
 package gr.aueb.cf.schoolapp.view_controller;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import gr.aueb.cf.schoolapp.Main;
 import gr.aueb.cf.schoolapp.dao.CityDAOImpl;
 import gr.aueb.cf.schoolapp.dao.ICityDAO;
@@ -18,72 +14,59 @@ import gr.aueb.cf.schoolapp.service.CityServiceImpl;
 import gr.aueb.cf.schoolapp.service.ICityService;
 import gr.aueb.cf.schoolapp.service.ITeacherService;
 import gr.aueb.cf.schoolapp.service.TeacherServiceImpl;
-import gr.aueb.cf.schoolapp.util.DBUtil;
 import gr.aueb.cf.schoolapp.validator.TeacherValidator;
 
-//import gr.aueb.cf.schoolapp.model.City;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import java.awt.Color;
-import javax.swing.ImageIcon;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.Serial;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class InsertTeacherPage extends JFrame {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField firstnameText;
-	private JTextField lastnameText;
-	private JTextField vatText;
-	private JTextField fathernameText;
-	private JTextField phoneNumberText;
-	private JTextField emailText;
-	private JTextField streetText;
-	private JTextField streetNumberText;
-	private JTextField zipcodeText;
-	private JLabel errorFirstname;
-	private JLabel errorLastname;
-	private JComboBox<City> cityComboBox;
+
+	private final JPanel contentPane;
+	private final JTextField firstnameText;
+	private final JTextField lastnameText;
+	private final JTextField vatText;
+	private final JTextField fathernameText;
+	private final JTextField phoneNumberText;
+	private final JTextField emailText;
+	private final JTextField streetText;
+	private final JTextField streetNumberText;
+	private final JTextField zipcodeText;
+	private final JLabel errorFirstname;
+	private final JLabel errorLastname;
+	private final JComboBox<City> cityComboBox;
 	private List<City> cities = new ArrayList<>();
+
+	private final ICityDAO cityDao = new CityDAOImpl();
+	private final ICityService cityService = new CityServiceImpl(cityDao);
 
 	private final ITeacherDAO teacherDAO = new TeacherDAOImpl();
 	private final ITeacherService teacherService = new TeacherServiceImpl(teacherDAO);
 
-	private final ICityDAO cityDAO = new CityDAOImpl();
-	private final ICityService cityService = new CityServiceImpl(cityDAO);
-
 	public InsertTeacherPage() {
+
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowActivated(WindowEvent e) {
 				try {
+					//cities = cityService.getAllCities();
 					cityService.getAllCities().forEach(cityComboBox::addItem);
+					//resetInputForm();
 				} catch (SQLException ex) {
-					JOptionPane.showMessageDialog(null, "Get cities fatal error. " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Get cities fatal error.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
+
 			}
 		});
-
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setTitle("Ποιότητα στην Εκπαίδευση");
 		setBounds(100, 100, 857, 701);
@@ -149,7 +132,6 @@ public class InsertTeacherPage extends JFrame {
 			public void focusLost(FocusEvent e) {
 				String inputFirstname;
 				inputFirstname = firstnameText.getText().trim();
-
 				errorFirstname.setText(inputFirstname.isEmpty() ? "Το όνομα είναι υποχρεωτικό" : "");
 			}
 		});
@@ -164,7 +146,6 @@ public class InsertTeacherPage extends JFrame {
 			public void focusLost(FocusEvent e) {
 				String inputLastname;
 				inputLastname = lastnameText.getText().trim();
-
 				errorLastname.setText(inputLastname.isEmpty() ? "Το επώνυμο είναι υποχρεωτικό" : "");
 			}
 		});
@@ -268,30 +249,29 @@ public class InsertTeacherPage extends JFrame {
 		cityComboBox.setBounds(89, 407, 263, 37);
 		contentPane.add(cityComboBox);
 
-
 		JButton insertBtn = new JButton("Υποβολή");
 		insertBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TeacherReadOnlyDTO teacherReadOnlyDTO;
-				TeacherInsertDTO insertDTO;
-
-				// Data Binding
-				insertDTO = doDataBinding();
+				TeacherInsertDTO insertDTO = doDataBinding(); // Data binding
 
 				// Validation
-				Map<String , String > errors = TeacherValidator.validate(insertDTO);
+				Map<String , String> errors = TeacherValidator.validate(insertDTO); 	// Validation
 				if (!errors.isEmpty()) {
 					errorFirstname.setText(errors.getOrDefault("firstname", ""));
 					errorLastname.setText(errors.getOrDefault("lastname", ""));
 					return;
 				}
-
 				try {
 					teacherReadOnlyDTO = teacherService.insertTeacher(insertDTO);
-					JOptionPane.showMessageDialog(null, "Teacher with uuid: " + teacherReadOnlyDTO.getUuid(), "Insert", JOptionPane.INFORMATION_MESSAGE);
-					// todo form instead of message dialog
-				} catch (TeacherDAOException | TeacherAlreadyExistsException ex) {
-					JOptionPane.showMessageDialog(null, "Error. " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					Main.getInsertSuccessPage().setUuidText(teacherReadOnlyDTO.getUuid());
+					Main.getInsertTeacherPage().setEnabled(false);
+					Main.getInsertSuccessPage().setVisible(true);
+					resetInputForm();
+				} catch (TeacherDAOException ex) {
+					JOptionPane.showMessageDialog(null, "DB Error", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (TeacherAlreadyExistsException ex) {
+					JOptionPane.showMessageDialog(null, "Teacher already exists", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -309,39 +289,11 @@ public class InsertTeacherPage extends JFrame {
 				Main.getInsertTeacherPage().setVisible(false);
 			}
 		});
-
 		closeBtn.setForeground(new Color(0, 0, 0));
 		closeBtn.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		closeBtn.setBackground(new Color(192, 192, 192));
 		closeBtn.setBounds(91, 485, 263, 54);
 		contentPane.add(closeBtn);
-	}
-
-	private List<City> fetchCitiesFromDatabase() {
-//		String sql = "SELECT * FROM cities order by name asc";
-//		List<City> cities = new ArrayList();
-//
-//		//Connection connection = Dashboard.getConnection();
-//
-//		try (Connection connection = DBUtil.getConnection();
-//			 PreparedStatement ps = connection.prepareStatement(sql)) {
-//
-//
-//			ResultSet rs = ps.executeQuery();
-//
-//			while (rs.next()) {
-//				int id = rs.getInt("id");
-//				String name = rs.getString("name");
-//
-//				City city = new City(id, name);
-//				cities.add(city);
-//			}
-//
-//		} catch (SQLException e) {
-//			JOptionPane.showMessageDialog(null,  "Select cities error", "Error", JOptionPane.ERROR_MESSAGE);
-//		}
-//		return cities;
-		return null;
 	}
 
 	private TeacherInsertDTO doDataBinding() {
@@ -358,6 +310,22 @@ public class InsertTeacherPage extends JFrame {
 		int cityId = (selectedCity != null) ? selectedCity.getId() : DEFAULT_CITY_ID;
 		String zipcode = zipcodeText.getText().trim();
 
-		return new TeacherInsertDTO(firstname, lastname, vat, fathername, phoneNumber, email, street, streetNumber, zipcode, cityId);
+		return new TeacherInsertDTO(firstname, lastname, vat, fathername,
+				phoneNumber, email, street, streetNumber, zipcode, cityId);
+	}
+
+	private void resetInputForm() {
+		firstnameText.setText("");
+		lastnameText.setText("");
+		vatText.setText("");
+		fathernameText.setText("");
+		phoneNumberText.setText("");
+		emailText.setText("");
+		streetText.setText("");
+		streetNumberText.setText("");
+		cityComboBox.setSelectedIndex(0);
+		zipcodeText.setText("");
+		errorFirstname.setText("");
+		errorLastname.setText("");
 	}
 }

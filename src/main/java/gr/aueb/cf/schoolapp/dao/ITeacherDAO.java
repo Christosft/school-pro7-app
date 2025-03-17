@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ITeacherDAO {
 
-    // Basic Services
+    // Basic services
     Teacher insert(Teacher teacher) throws TeacherDAOException;
     Teacher update(Teacher teacher) throws TeacherDAOException;
     void delete(Integer id) throws TeacherDAOException;

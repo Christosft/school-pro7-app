@@ -1,30 +1,29 @@
 package gr.aueb.cf.schoolapp.view_controller;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import gr.aueb.cf.schoolapp.Main;
+import gr.aueb.cf.schoolapp.dao.CityDAOImpl;
+import gr.aueb.cf.schoolapp.dao.ICityDAO;
+import gr.aueb.cf.schoolapp.dao.ITeacherDAO;
+import gr.aueb.cf.schoolapp.dao.TeacherDAOImpl;
+import gr.aueb.cf.schoolapp.dao.exceptions.TeacherDAOException;
+import gr.aueb.cf.schoolapp.dto.TeacherReadOnlyDTO;
+import gr.aueb.cf.schoolapp.exceptions.TeacherNotFoundException;
 import gr.aueb.cf.schoolapp.model.City;
+import gr.aueb.cf.schoolapp.service.CityServiceImpl;
+import gr.aueb.cf.schoolapp.service.ICityService;
+import gr.aueb.cf.schoolapp.service.ITeacherService;
+import gr.aueb.cf.schoolapp.service.TeacherServiceImpl;
 
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.ImageIcon;
-
-import java.awt.Font;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JSeparator;
 
 public class TeacherView extends JFrame {
 
@@ -44,12 +43,22 @@ public class TeacherView extends JFrame {
 
 	private List<City> cities = new ArrayList<>();
 
+	private final ICityDAO cityDao = new CityDAOImpl();
+	private final ICityService cityService = new CityServiceImpl(cityDao);
+
+	private final ITeacherDAO teacherDAO = new TeacherDAOImpl();
+	private final ITeacherService teacherService = new TeacherServiceImpl(teacherDAO);
 
 	public TeacherView() {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowActivated(WindowEvent e) {
-				cities = fetchCitiesFromDatabase();
+				//cities = fetchCitiesFromDatabase();
+				try {
+					cities = cityService.getAllCities();
+				} catch (SQLException ex) {
+					JOptionPane.showMessageDialog(null, "Get cities fatal error.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 				//cities.forEach(city -> cityComboBox.addItem(city));
 				fetchTeacherFromDatabase(Main.getViewTeachersPage().getSelectedId());
 			}
@@ -145,11 +154,11 @@ public class TeacherView extends JFrame {
 		contentPane.add(vatText);
 
 		JLabel lblFathername = new JLabel("Πατρώνυμο Εκπαιδευτή");
-		lblFathername.setBounds(70, 265, 128, 27);
+		lblFathername.setBounds(70, 265, 150, 27);
 		contentPane.add(lblFathername);
 
 		JLabel lblPhoneNum = new JLabel("Τηλέφωνο Εκπαιδευτή");
-		lblPhoneNum.setBounds(70, 303, 128, 27);
+		lblPhoneNum.setBounds(70, 303, 150, 27);
 		contentPane.add(lblPhoneNum);
 
 		JLabel lblEmail = new JLabel("e-mail Εκπαιδευτή");
@@ -157,15 +166,15 @@ public class TeacherView extends JFrame {
 		contentPane.add(lblEmail);
 
 		JLabel lblStreet = new JLabel("Διεύθυνση Εκπαιδευτή");
-		lblStreet.setBounds(70, 354, 128, 27);
+		lblStreet.setBounds(70, 354, 150, 27);
 		contentPane.add(lblStreet);
 
 		fathernameText = new JLabel("Πατρώνυμο Εκπαιδευτή");
-		fathernameText.setBounds(277, 265, 128, 27);
+		fathernameText.setBounds(277, 265, 150, 27);
 		contentPane.add(fathernameText);
 
 		phoneNumText = new JLabel("Τηλέφωνο Εκπαιδευτή");
-		phoneNumText.setBounds(277, 303, 128, 27);
+		phoneNumText.setBounds(277, 303, 150, 27);
 		contentPane.add(phoneNumText);
 
 		emailText = new JLabel("email Εκπαιδευτή");
@@ -173,7 +182,7 @@ public class TeacherView extends JFrame {
 		contentPane.add(emailText);
 
 		streetText = new JLabel("Διεύθυνση Εκπαιδευτή");
-		streetText.setBounds(277, 354, 128, 27);
+		streetText.setBounds(277, 354, 150, 27);
 		contentPane.add(streetText);
 
 		JLabel lblStreetNum = new JLabel("Αριθμός Διεύθυνσης");
@@ -223,76 +232,37 @@ public class TeacherView extends JFrame {
 		contentPane.add(separator_1_1);
 	}
 
-	//	private void fetchTeacherFromDatabase(int id) {
-	private void fetchTeacherFromDatabase(String uuid) {
-//		String sql = "SELECT * FROM teachers WHERE id = ?";
-//		String sql = "SELECT * FROM teachers WHERE uuid = ?";
-//		Connection conn = Dashboard.getConnection();
-//
-//		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-//
-//			//ps.setInt(1, id);
-//			ps.setString(1, uuid);
-//			ResultSet rs = ps.executeQuery();
-//
-//			if (rs.next()) {
-//				kwdikosText.setText(rs.getString("uuid")); //.substring(0, 8));
-//				firstnameText.setText(rs.getString("firstname"));
-//				lastnameText.setText(rs.getString("lastname"));
-//				vatText.setText(rs.getString("vat"));
-//				fathernameText.setText(rs.getString("fathername"));
-//				phoneNumText.setText(rs.getString("phone_num"));
-//				emailText.setText(rs.getString("email"));
-//				streetText.setText(rs.getString("street"));
-//				streetNumText.setText(rs.getString("street_num"));
-//				//cityComboBox.setSelectedIndex(rs.getInt("city_id")-1);
-//				int cityIdFromDB = rs.getInt("city_id"); // Get city_id from DB
-////				System.out.println("city_id" + cityIdFromDB);
-//				// Find the matching city using Streams
-//				City selectedCity = cities.stream()
-//				    .filter(city -> city.getId() == cityIdFromDB)
-//				    .findFirst()
-//				    .orElse(null); // Returns null if no match is found
-////				System.out.println("Selected City: " + selectedCity);
-//				// Select the city in the JComboBox
-//				if (selectedCity != null) {
-//				    cityText.setText(selectedCity.getName());
-//				} //else cityComboBox.setSelectedIndex(0);
-//
-////				City selectedCity = (City) cityComboBox.getSelectedItem();
-////				int cityId = selectedCity.getId();
-//
-//				zipcodeText.setText(rs.getString("zipcode"));
-////				errorFirstname.setText("");
-////				errorLastname.setText("");
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			JOptionPane.showMessageDialog(null,  "Select error in fetch teacher", "Error", JOptionPane.ERROR_MESSAGE);
-//		}
-	}
+	private void fetchTeacherFromDatabase(int id) {
+		try {
+			TeacherReadOnlyDTO dto = teacherService.getTeacherById(id);
 
-	private List<City> fetchCitiesFromDatabase() {
-//		String sql = "SELECT * FROM cities order by name asc";
-//		List<City> cities = new ArrayList<>();
-//		Connection conn = Dashboard.getConnection();
-//
-//		try (PreparedStatement ps = conn.prepareStatement(sql);
-//				ResultSet rs = ps.executeQuery()) {
-//
-//	        while (rs.next()) {
-//	            int id = rs.getInt("id"); // Get the id column
-//	            String name = rs.getString("name"); // Get the name column
-//
-//	            // Create a City object and add it to the list
-//	            City city = new City(id, name);
-//	            cities.add(city);
-//	        }
-//		} catch (SQLException e) {
-//			//e.printStackTrace();
-//			JOptionPane.showMessageDialog(null,  "Select error in fetch cities", "Error", JOptionPane.ERROR_MESSAGE);
-//		}
-//		return cities;
-		return null;
+			kwdikosText.setText(dto.getUuid().substring(0, 8)); //.substring(0, 8));
+			firstnameText.setText(dto.getFirstname());
+			lastnameText.setText(dto.getLastname());
+			vatText.setText(dto.getVat());
+			fathernameText.setText(dto.getFatherName());
+			phoneNumText.setText(dto.getPhoneNum());
+			emailText.setText(dto.getEmail());
+			streetText.setText(dto.getStreet());
+			streetNumText.setText(dto.getStreetNum());
+			//cityComboBox.setSelectedIndex(rs.getInt("city_id")-1);
+			int cityIdFromDB = dto.getCityId(); // Get city_id from DB
+//				System.out.println("city_id" + cityIdFromDB);
+			// Find the matching city using Streams
+			City selectedCity = cities.stream()
+					.filter(city -> city.getId() == cityIdFromDB)
+					.findFirst()
+					.orElse(null); // Returns null if no match is found
+			// Select the city in the JComboBox
+			if (selectedCity != null) {
+				cityText.setText(selectedCity.getName());
+			}
+			zipcodeText.setText(dto.getZipCode());
+		} catch (TeacherDAOException | TeacherNotFoundException e) {
+			//e.printStackTrace();
+			//JOptionPane.showMessageDialog(null,  "Select error in fetch teacher", "Error", JOptionPane.ERROR_MESSAGE);
+			Main.getViewTeachersPage().setEnabled(true);
+			Main.getTeacherView().setVisible(false);
+		}
 	}
 }

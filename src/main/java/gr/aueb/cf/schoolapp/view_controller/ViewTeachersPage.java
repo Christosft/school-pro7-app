@@ -1,33 +1,29 @@
 package gr.aueb.cf.schoolapp.view_controller;
 
 import gr.aueb.cf.schoolapp.Main;
+import gr.aueb.cf.schoolapp.dao.CityDAOImpl;
+import gr.aueb.cf.schoolapp.dao.ICityDAO;
+import gr.aueb.cf.schoolapp.dao.ITeacherDAO;
+import gr.aueb.cf.schoolapp.dao.TeacherDAOImpl;
+import gr.aueb.cf.schoolapp.dao.exceptions.TeacherDAOException;
+import gr.aueb.cf.schoolapp.dto.TeacherReadOnlyDTO;
+import gr.aueb.cf.schoolapp.exceptions.TeacherNotFoundException;
+import gr.aueb.cf.schoolapp.service.CityServiceImpl;
+import gr.aueb.cf.schoolapp.service.ICityService;
+import gr.aueb.cf.schoolapp.service.ITeacherService;
+import gr.aueb.cf.schoolapp.service.TeacherServiceImpl;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.ImageIcon;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.JButton;
-import java.awt.Font;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JSeparator;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 public class ViewTeachersPage extends JFrame {
 
@@ -36,16 +32,18 @@ public class ViewTeachersPage extends JFrame {
 	private JTextField lastnameText;
 	private JTable table;
 	private DefaultTableModel model = new DefaultTableModel();
-	//private int selectedId;
-	private String selectedId;
+	private int selectedId;
+	//private String selectedId;
 	private String selectedUUID;
+
+	private final ICityDAO cityDao = new CityDAOImpl();
+	private final ICityService cityService = new CityServiceImpl(cityDao);
+
+	private final ITeacherDAO teacherDAO = new TeacherDAOImpl();
+	private final ITeacherService teacherService = new TeacherServiceImpl(teacherDAO);
 
 	public ViewTeachersPage() {
 		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent e) {
-//				buildTable();
-			}
 			@Override
 			public void windowActivated(WindowEvent e) {
 				buildTable();
@@ -97,31 +95,32 @@ public class ViewTeachersPage extends JFrame {
 		footer.add(lbl_support);
 
 		lastnameText = new JTextField();
-		lastnameText.setBounds(110, 130, 181, 40);
+//		lastnameText.setBounds(110, 130, 181, 40);
+		lastnameText.setBounds(120, 130, 171, 40);
 		contentPane.add(lastnameText);
 		lastnameText.setColumns(10);
 
-		JButton btnNewButton = new JButton("Αναζήτηση");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnSearch = new JButton("Αναζήτηση");
+		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buildTable();
 			}
 		});
-		btnNewButton.setBackground(new Color(0, 128, 0));
-		btnNewButton.setForeground(new Color(255, 255, 255));
-		btnNewButton.setBounds(304, 130, 125, 40);
-		contentPane.add(btnNewButton);
+		btnSearch.setBackground(new Color(0, 128, 0));
+		btnSearch.setForeground(new Color(255, 255, 255));
+		btnSearch.setBounds(304, 130, 125, 40);
+		contentPane.add(btnSearch);
 
-		JButton btnNewButton_1 = new JButton("Εκκαθάριση");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		JButton btnClear = new JButton("Εκκαθάριση");
+		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				lastnameText.setText("");
 				buildTable();
 			}
 		});
-		btnNewButton_1.setForeground(new Color(192, 192, 192));
-		btnNewButton_1.setBounds(439, 130, 125, 40);
-		contentPane.add(btnNewButton_1);
+		btnClear.setForeground(new Color(192, 192, 192));
+		btnClear.setBounds(439, 130, 125, 40);
+		contentPane.add(btnClear);
 
 		JLabel lblNewLabel = new JLabel("Αιτήσεις Εκπαιδευτών");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 24));
@@ -142,11 +141,9 @@ public class ViewTeachersPage extends JFrame {
 					// Check if a row is selected
 					if (selectedRow != -1) {
 						// Get data from the selected row
-						//String selectedStr = (String) model.getValueAt(selectedRow, 0); // ID column
-						//selectedId = Integer.parseInt(selectedStr);
-						//selectedId = Integer.parseInt(selectedStr);
-						selectedUUID = (String) model.getValueAt(selectedRow, 0);
-
+						selectedId = (Integer) model.getValueAt(selectedRow, 0); // ID column
+					} else {
+						// todo
 					}
 				}
 			}
@@ -196,8 +193,21 @@ public class ViewTeachersPage extends JFrame {
 		btnDelete.setForeground(new Color(255, 255, 255));
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//doDelete(selectedId);
-				doDelete(selectedUUID);
+				int response;
+				try {
+					response = JOptionPane.showConfirmDialog(null, "Είστε σίγουρος;", "Warning", JOptionPane.YES_NO_OPTION);
+					if (response == JOptionPane.YES_OPTION) {
+						teacherService.deleteTeacher(selectedId);
+						JOptionPane.showMessageDialog(null, "Teacher was deleted successfully", "Delete",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+				} catch (TeacherDAOException ex) {
+					//ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, "", "", JOptionPane.ERROR_MESSAGE);
+				} catch (TeacherNotFoundException ex) {
+					//ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, "", "", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -213,8 +223,8 @@ public class ViewTeachersPage extends JFrame {
 		JButton closeBtn = new JButton("Κλείσιμο");
 		closeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Main.getDashboard().setEnabled(true);
 				Main.getViewTeachersPage().setVisible(false);
+				Main.getDashboard().setEnabled(true);
 			}
 		});
 		closeBtn.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -225,69 +235,28 @@ public class ViewTeachersPage extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel("Επώνυμο");
 		lblNewLabel_1.setBounds(57, 128, 57, 44);
 		contentPane.add(lblNewLabel_1);
-		//contentPane.add(table);
 	}
 
-
-	//	public int getSelectedId() {
-//		return selectedId;
+	public int getSelectedId() {
+		return selectedId;
+	}
+//	public String getSelectedId() {	if uuid was the first column in table
+//		return selectedUUID;
 //	}
-	public String getSelectedId() {
-		return selectedUUID;
-	}
-
-
 
 	private void buildTable() {
-//	    String sql = "SELECT id, firstname, lastname FROM teachers WHERE lastname LIKE ?";
-		//String sql = "SELECT uuid, firstname, lastname FROM teachers WHERE lastname LIKE ?";
-//	    Connection conn = Dashboard.getConnection();
-//
-//	    try (
-//	         PreparedStatement ps = conn.prepareStatement(sql)) {
-//
-//	        ps.setString(1, lastnameText.getText().trim() + "%");
-//	        ResultSet rs = ps.executeQuery();
-//
-//	        model.setRowCount(0); // Clear the table
-//	        while (rs.next()) {
-//	            Object[] row = {
-//	            	rs.getString("uuid"), //.substring(0, 8),
-////	                rs.getString("id"),
-//	                rs.getString("firstname"),
-//	                rs.getString("lastname")
-//	            };
-//	            model.addRow(row);
-//	        }
-//	    } catch (SQLException e) {
-//	    	e.printStackTrace();
-//	        JOptionPane.showMessageDialog(null, "Select error", "Error", JOptionPane.ERROR_MESSAGE);
-//	    }
-	}
-
-	//private void doDelete(int id) {
-	private void doDelete(String uuid) {
-//		String sql = "DELETE FROM teachers WHERE id = ?";
-//		String sql = "DELETE FROM teachers WHERE uuid = ?";
-//		Connection conn = Dashboard.getConnection();
-//
-//		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-//
-//			//ps.setInt(1, id);
-//			ps.setString(1, uuid);
-//
-//			int answer = JOptionPane.showConfirmDialog(null, "Είστε σίγουρη/ος", "Διαγραφή",
-//					JOptionPane.YES_NO_OPTION);
-//			if (answer == JOptionPane.YES_OPTION) {
-//				int rowsAffected = ps.executeUpdate();
-//				JOptionPane.showMessageDialog(null, rowsAffected + " γρααμμή/ες διαγράφηκαν", "Διαγραφή",
-//						JOptionPane.INFORMATION_MESSAGE);
-//			} else {
-//				return;
-//			}
-//		} catch (SQLException ex) {
-//			//ex.printStackTrace();
-//			JOptionPane.showMessageDialog(null,  "Delete error", "Error", JOptionPane.ERROR_MESSAGE);
-//		}
+		List<TeacherReadOnlyDTO> teachers;
+		try {
+			for (int i =  model.getRowCount() - 1; i >= 0; i--) {
+				model.removeRow(i);
+			}
+			teachers = teacherService.getTeachersByLastname(lastnameText.getText().trim());
+			teachers.stream()
+					.map(t -> new Object[] {t.getId(), t.getFirstname(), t.getLastname()})
+					.forEach(row -> model.addRow(row));
+		} catch (TeacherDAOException e) {
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error in building the table", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

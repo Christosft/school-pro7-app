@@ -1,6 +1,6 @@
 package gr.aueb.cf.schoolapp.dto;
 
-public class TeacherUpdateDTO extends BaseDTO {
+public class TeacherUpdateDTO extends BaseTeacherDTO {
     private Integer id;
 
     public TeacherUpdateDTO() {
@@ -20,5 +20,12 @@ public class TeacherUpdateDTO extends BaseDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "TeacherUpdateDTO{" +
+                "id=" + id +
+                '}' + super.toString();
     }
 }

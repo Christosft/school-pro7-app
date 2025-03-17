@@ -14,15 +14,14 @@ public class TeacherDAOImpl implements ITeacherDAO {
 
     @Override
     public Teacher insert(Teacher teacher) throws TeacherDAOException {
-        String sql = "INSERT INTO teachers (firstname, lastname, vat, fathername, phone_num, email, " +
-                "street, street_num, zipcode, city_id, uuid, created_at, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+        String sql = "INSERT INTO teachers (firstname, lastname, vat, fathername, phone_num," +
+                " email, street, street_num, zipcode, city_id, uuid, created_at, updated_at)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Teacher insertedTeacher = null;
 
         try (Connection connection = DBUtil.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+             PreparedStatement ps = connection.prepareStatement(sql,
+                     Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, teacher.getFirstname());
             ps.setString(2, teacher.getLastname());
             ps.setString(3, teacher.getVat());
@@ -36,30 +35,30 @@ public class TeacherDAOImpl implements ITeacherDAO {
             ps.setString(11, UUID.randomUUID().toString());
             ps.setTimestamp(12, Timestamp.valueOf(LocalDateTime.now()));
             ps.setTimestamp(13, Timestamp.valueOf(LocalDateTime.now()));
-
             ps.executeUpdate();
 
             ResultSet rsGeneratedKeys = ps.getGeneratedKeys();
             if (rsGeneratedKeys.next()) {
-                int generatedKey = rsGeneratedKeys.getInt(1);
-                insertedTeacher = getById(generatedKey);
+                int generatedId = rsGeneratedKeys.getInt(1);
+                insertedTeacher =  getById(generatedId);
             }
             // logging
             return insertedTeacher;
         } catch (SQLException e) {
-            // e.printStackTrace();
+            //e.printStackTrace();
             // logging
-            throw new TeacherDAOException("SQL Error. Teacher with vat: " + teacher.getVat() + " not inserted.");
+            throw new TeacherDAOException("SQL error in insert teacher with vat: " +
+                    teacher.getVat());
         }
     }
 
     @Override
     public Teacher update(Teacher teacher) throws TeacherDAOException {
-        String sql = "UPDATE teachers SET firstname = ?, lastname = ?, vat = ?, fathername = ?, " +
-                "phone_num = ?, email = ?, street = ?, street_num = ?, zipcode = ?, city_id = ?, " +
-                "updated_at = ? WHERE id = ?";
 
-        Teacher updatedTeacher = null;
+        String sql = "UPDATE teachers SET firstname = ?, lastname = ?, vat = ?, fathername = ?, phone_num = ?," +
+                " email = ?, street = ?, street_num = ?, zipcode = ?, city_id = ?," +
+                " updated_at = ? WHERE id = ?";
+        Teacher updatedTeacher;
 
         try (Connection connection = DBUtil.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -74,25 +73,25 @@ public class TeacherDAOImpl implements ITeacherDAO {
             ps.setString(8, teacher.getStreetNum());
             ps.setString(9, teacher.getZipCode());
             ps.setInt(10, teacher.getCityId());
-            ps.setTimestamp(11, Timestamp.valueOf(teacher.getUpdatedAt()));
-            ps.setInt(12,teacher.getId());
+//            ps.setTimestamp(11, Timestamp.valueOf(teacher.getUpdatedAt()));
+            ps.setTimestamp(11, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setInt(12, teacher.getId());
 
             ps.executeUpdate();
 
             updatedTeacher = getById(teacher.getId());
-
             // logging
             return updatedTeacher;
         } catch (SQLException e) {
-            // e.printStackTrace();
+            e.printStackTrace();
             // logging
-            throw new TeacherDAOException("SQL Error. Teacher with vat: " + teacher.getVat() + " not updated.");
+            throw new TeacherDAOException("SQL error in update teacher with vat: " + teacher.getVat());
         }
     }
 
     @Override
     public void delete(Integer id) throws TeacherDAOException {
-        String sql = "DELETE FROM teachers WHERE id = ?";
+        String sql = "DELETE FROM TEACHERS WHERE id = ?";
 
         try (Connection connection = DBUtil.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -101,9 +100,9 @@ public class TeacherDAOImpl implements ITeacherDAO {
             ps.executeUpdate();
             // logging
         } catch (SQLException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             // logging
-            throw new TeacherDAOException("SQL Error. Teacher with id: " + id + " not deleted.");
+            throw new TeacherDAOException("SQL error in delete with teacher id: " + id);
         }
     }
 
@@ -127,16 +126,16 @@ public class TeacherDAOImpl implements ITeacherDAO {
             }
             return teacher;
         } catch (SQLException e) {
-            // e.printStackTrace();
+            e.printStackTrace();
             // logging
-            throw new TeacherDAOException("SQL Error. Teacher with id: " + id + " error in finding.");
+            throw new TeacherDAOException("SQL error in get by id with id: " + id);
         }
     }
 
     @Override
     public List<Teacher> getAll() throws TeacherDAOException {
         String sql = "SELECT * FROM teachers";
-        Teacher teacher = null;
+        Teacher teacher;
         List<Teacher> teachers = new ArrayList<>();
         ResultSet rs;
 
@@ -152,12 +151,12 @@ public class TeacherDAOImpl implements ITeacherDAO {
                         rs.getTimestamp("created_at").toLocalDateTime(), rs.getTimestamp("updated_at").toLocalDateTime());
                 teachers.add(teacher);
             }
-            return teachers;
         } catch (SQLException e) {
-            // e.printStackTrace();
+            //e.printStackTrace();
             // logging
-            throw new TeacherDAOException("SQL Error. Error in get all teachers.");
+            throw new TeacherDAOException("SQL error in get all");
         }
+        return teachers;
     }
 
     @Override
@@ -180,25 +179,23 @@ public class TeacherDAOImpl implements ITeacherDAO {
             }
             return teacher;
         } catch (SQLException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             // logging
-            throw new TeacherDAOException("SQL Error. Teacher with uuid: " + uuid + " error in finding.");
+            throw new TeacherDAOException("SQL error in get by uuid with uuid: " + uuid);
         }
     }
 
     @Override
     public List<Teacher> getByLastname(String lastname) throws TeacherDAOException {
-        String sql = "SELECT * FROM teachers WHERE lastname LIKE ?";
-        Teacher teacher = null;
         List<Teacher> teachers = new ArrayList<>();
+        Teacher teacher;
+        String sql = "SELECT * FROM teachers WHERE lastname LIKE ?";
         ResultSet rs;
 
         try (Connection connection = DBUtil.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
-
             ps.setString(1, lastname + "%");
             rs = ps.executeQuery();
-
             while (rs.next()) {
                 teacher = new Teacher(rs.getInt("id"), rs.getString("firstname"), rs.getString("lastname"), rs.getString("vat"),
                         rs.getString("fathername"), rs.getString("phone_num"), rs.getString("email"), rs.getString("street"),
@@ -210,7 +207,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
         } catch (SQLException e) {
             // e.printStackTrace();
             // logging
-            throw new TeacherDAOException("SQL Error. Error in get teachers by lastname.");
+            throw new TeacherDAOException("SQL error in get with lastname: " + lastname);
         }
     }
 
@@ -232,11 +229,10 @@ public class TeacherDAOImpl implements ITeacherDAO {
                         rs.getString("street_num"), rs.getString("zipcode"), rs.getInt("city_id"), rs.getString("uuid"),
                         rs.getTimestamp("created_at").toLocalDateTime(), rs.getTimestamp("updated_at").toLocalDateTime());
             }
-            return teacher;
         } catch (SQLException e) {
-            // e.printStackTrace();
-            // logging
-            throw new TeacherDAOException("SQL Error. Teacher with vat: " + vat + " error in finding.");
+            //e.printStackTrace();
+            throw new TeacherDAOException("SQL error in get with vat: " + vat);
         }
+        return teacher;
     }
 }

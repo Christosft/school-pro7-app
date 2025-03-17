@@ -7,20 +7,18 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class CityServiceImpl implements ICityService {
+    private final ICityDAO dao;
 
-    private final ICityDAO cityDAO;
-
-    public CityServiceImpl(ICityDAO cityDAO) {
-        this.cityDAO = cityDAO;
+    public CityServiceImpl(ICityDAO dao) {
+        this.dao = dao;
     }
-
 
     @Override
     public List<City> getAllCities() throws SQLException {
         try {
-            return cityDAO.getAll();
+            return dao.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             throw e;
         }
     }
