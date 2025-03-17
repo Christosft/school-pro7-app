@@ -1,6 +1,7 @@
 package gr.aueb.cf.schoolapp.dto;
 
 public abstract class BaseDTO {
+
     private String firstname;
     private String lastname;
     private String vat;
@@ -111,4 +112,3 @@ public abstract class BaseDTO {
         this.cityId = cityId;
     }
 }
-

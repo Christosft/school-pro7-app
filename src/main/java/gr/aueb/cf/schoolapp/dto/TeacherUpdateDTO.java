@@ -1,7 +1,6 @@
 package gr.aueb.cf.schoolapp.dto;
 
-public class TeacherUpdateDTO extends BaseDTO{
-
+public class TeacherUpdateDTO extends BaseDTO {
     private Integer id;
 
     public TeacherUpdateDTO() {

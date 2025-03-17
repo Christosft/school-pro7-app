@@ -47,7 +47,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
             // logging
             return insertedTeacher;
         } catch (SQLException e) {
-            //e.printStackTrace();  used only for testing
+            // e.printStackTrace();
             // logging
             throw new TeacherDAOException("SQL Error. Teacher with vat: " + teacher.getVat() + " not inserted.");
         }
@@ -84,7 +84,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
             // logging
             return updatedTeacher;
         } catch (SQLException e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             // logging
             throw new TeacherDAOException("SQL Error. Teacher with vat: " + teacher.getVat() + " not updated.");
         }
@@ -101,7 +101,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
             ps.executeUpdate();
             // logging
         } catch (SQLException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             // logging
             throw new TeacherDAOException("SQL Error. Teacher with id: " + id + " not deleted.");
         }
@@ -127,7 +127,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
             }
             return teacher;
         } catch (SQLException e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             // logging
             throw new TeacherDAOException("SQL Error. Teacher with id: " + id + " error in finding.");
         }
@@ -135,7 +135,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
 
     @Override
     public List<Teacher> getAll() throws TeacherDAOException {
-        String sql = "SELECT * FROM teachers WHERE lastname LIKE ?";
+        String sql = "SELECT * FROM teachers";
         Teacher teacher = null;
         List<Teacher> teachers = new ArrayList<>();
         ResultSet rs;
@@ -154,7 +154,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
             }
             return teachers;
         } catch (SQLException e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             // logging
             throw new TeacherDAOException("SQL Error. Error in get all teachers.");
         }
@@ -180,7 +180,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
             }
             return teacher;
         } catch (SQLException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             // logging
             throw new TeacherDAOException("SQL Error. Teacher with uuid: " + uuid + " error in finding.");
         }
@@ -208,7 +208,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
             }
             return teachers;
         } catch (SQLException e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             // logging
             throw new TeacherDAOException("SQL Error. Error in get teachers by lastname.");
         }
@@ -234,7 +234,7 @@ public class TeacherDAOImpl implements ITeacherDAO {
             }
             return teacher;
         } catch (SQLException e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             // logging
             throw new TeacherDAOException("SQL Error. Teacher with vat: " + vat + " error in finding.");
         }
