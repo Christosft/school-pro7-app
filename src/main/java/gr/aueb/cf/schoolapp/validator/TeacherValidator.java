@@ -1,5 +1,7 @@
 package gr.aueb.cf.schoolapp.validator;
 
+import gr.aueb.cf.schoolapp.dto.BaseTeacherDTO;
+
 import java.util.HashMap;
 import java.util.Map;
 

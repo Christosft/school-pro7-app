@@ -1,21 +1,25 @@
 package gr.aueb.cf.schoolapp;
 
 import gr.aueb.cf.schoolapp.view_controller.*;
-import java.awt.EventQueue;
+
+import java.awt.*;
 
 public class Main {
-	private static final LandingPage landingPage = new LandingPage();
-	private static final LoginPage loginPage = new LoginPage();
-	private static final Dashboard dashboard =  new Dashboard();
-	private static final ViewTeachersPage viewTeachersPage = new ViewTeachersPage();
-	private static final TeacherView teacherView = new TeacherView();
-	private static final UpdateTeacherPage updateTeacherPage = new UpdateTeacherPage();
-	private static final InsertTeacherPage insertTeacherPage = new InsertTeacherPage();
+
+	private final static LandingPage landingPage = new LandingPage();
+	private final static LoginPage loginPage = new LoginPage();
+	private final static Dashboard dashboard = new Dashboard();
+	private final static InsertTeacherPage insertTeacherPage = new InsertTeacherPage();
+	private final static ViewTeachersPage viewTeachersPage = new ViewTeachersPage();
+	private final static UpdateTeacherPage updateTeacherPage = new UpdateTeacherPage();
+	private final static TeacherView teacherView = new TeacherView();
+	private final static InsertSuccessPage insertSuccessPage = new InsertSuccessPage();
+	private final static UpdateSuccessPage updateSuccessPage = new UpdateSuccessPage();
 
 	public static void main(String[] args) {
+
 		EventQueue.invokeLater(() -> {
 			try {
-
 				landingPage.setVisible(true);
 				landingPage.setLocationRelativeTo(null);
 
@@ -25,11 +29,11 @@ public class Main {
 				dashboard.setVisible(false);
 				dashboard.setLocationRelativeTo(null);
 
-				viewTeachersPage.setVisible(false);
-				viewTeachersPage.setLocationRelativeTo(null);
-
 				insertTeacherPage.setVisible(false);
 				insertTeacherPage.setLocationRelativeTo(null);
+
+				viewTeachersPage.setVisible(false);
+				viewTeachersPage.setLocationRelativeTo(null);
 
 				teacherView.setVisible(false);
 				teacherView.setLocationRelativeTo(null);
@@ -37,8 +41,13 @@ public class Main {
 				updateTeacherPage.setVisible(false);
 				updateTeacherPage.setLocationRelativeTo(null);
 
+				insertSuccessPage.setVisible(false);
+				insertSuccessPage.setLocationRelativeTo(null);
+
+				updateSuccessPage.setVisible(false);
+				updateSuccessPage.setLocationRelativeTo(null);
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		});
 	}
@@ -55,21 +64,28 @@ public class Main {
 		return dashboard;
 	}
 
-	public static ViewTeachersPage getViewTeachersPage() {
-		return viewTeachersPage;
+	public static InsertTeacherPage getInsertTeacherPage() {
+		return insertTeacherPage;
 	}
 
-	public static TeacherView getTeacherView() {
-		return teacherView;
+	public static ViewTeachersPage getViewTeachersPage() {
+		return viewTeachersPage;
 	}
 
 	public static UpdateTeacherPage getUpdateTeacherPage() {
 		return updateTeacherPage;
 	}
 
-	public static InsertTeacherPage getInsertTeacherPage() {
-		return insertTeacherPage;
+	public static TeacherView getTeacherView() {
+		return teacherView;
 	}
 
+	public static InsertSuccessPage getInsertSuccessPage() {
+		return insertSuccessPage;
+	}
+
+	public static UpdateSuccessPage getUpdateSuccessPage() {
+		return updateSuccessPage;
+	}
 
 }

@@ -11,9 +11,9 @@ public class DBUtil {
     private static Connection connection;
 
     static {
-        ds.setUrl("jdbc:mysql://localhost:3306/schooldb7staging?serverTimeZone=UTC");
-        ds.setUsername("user7");
-        ds.setPassword("12345");
+        ds.setUrl("jdbc:mysql://localhost:3306/school7dbpro?serverTimeZone=UTC");
+        ds.setUsername("user7Pro");
+        ds.setPassword(System.getenv("PASSWD_USER7"));
 
         // Το Maven automatically detects the driver, no need for the following
         // ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
